@@ -46,8 +46,8 @@
 Make sure you have PHP and PostgreSQL installed and running locally. Rename `.env.example.local` to `.env` and change the default values. You're good to go! For running tests make sure you have SQLite available.
 
 ```sh
-$ git clone https://github.com/appname/boilerplate-api-laravel
-$ cd boilerplate-api-laravel
+$ git clone https://github.com/mzohaibnaz/laravel-api-boilerplate.git
+$ cd laravel-api-boilerplate
 $ composer install
 $ cp .env.example.local .env
 $ cp .env.example.test .env.test
