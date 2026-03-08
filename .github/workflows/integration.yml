@@ -1,0 +1,74 @@
+name: integration
+
+on:
+  pull_request:
+    branches:
+      - development
+      - staging
+      - main
+
+env:
+  CI: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Lint Test
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --diff --dry-run
+
+      - name: Cancel workflow on job failure
+        if: failure()
+        uses: andymckay/cancel-action@0.2
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+
+      - name: Setup Configuration Environment File
+        run: cp .env.example.test .env.test
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist
+
+      - name: Run Integration Tests
+        run: php artisan test --parallel --stop-on-failure
+
+      - name: Cancel workflow on job failure
+        if: failure()
+        uses: andymckay/cancel-action@0.2
+
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+
+      - name: Install Dependencies
+        run: composer install --prefer-dist
+
+      - name: Run Static Analysis
+        run: vendor/bin/phpstan analyse
+
+      - name: Cancel workflow on job failure
+        if: failure()
+        uses: andymckay/cancel-action@0.2
